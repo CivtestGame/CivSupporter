@@ -60,7 +60,8 @@ minetest.register_chatcommand(
 
          local color = validate_color(param)
          if not color then
-            return false, "Invalid color code format."
+            return false, "Invalid color code format "
+               .. "(example: /namecolor #f00f3d)"
          end
 
          player_chatcolors[pname] = color
