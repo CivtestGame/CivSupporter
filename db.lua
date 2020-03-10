@@ -56,21 +56,28 @@ local QUERY_REGISTER_NAMECOLOR = [[
     (SELECT (id) FROM player WHERE player.name = ?), ?
   )
   ON CONFLICT (player_id) DO UPDATE
-    SET color = ?;
+    SET color = ?, active = ?;
 ]]
 
 local QUERY_GET_NAMECOLOR = [[
   SELECT (color) FROM player_chatcolor
   WHERE player_chatcolor.player_id =
       (SELECT (id) FROM player WHERE player.name = ?)
-    AND player_chatcolor.active = TRUE;
+    AND player_chatcolor.active = ?;
 ]]
 
-function civsupp.db.update_namecolor(pname, color)
-   return assert(u.prepare(db, QUERY_REGISTER_NAMECOLOR, pname, color, color))
+function civsupp.db.update_namecolor(pname, color, active)
+   -- if a caller doesn't provide the 'active' parameter, just assume they want
+   -- the entry to be active.
+   if active == nil then
+      active = true
+   end
+   return assert(
+      u.prepare(db, QUERY_REGISTER_NAMECOLOR, pname, color, color, active)
+   )
 end
 
 function civsupp.db.get_namecolor(pname)
-   local cur = u.prepare(db, QUERY_GET_NAMECOLOR, pname)
+   local cur = u.prepare(db, QUERY_GET_NAMECOLOR, pname, true)
    return cur and cur:fetch({}, "a")
 end

@@ -1,16 +1,31 @@
 
+local player_chatcolors = {}
+
 minetest.register_privilege(
    "namecolor",
    {
-      description = "Allows the player to set their chat name color."
+      description = "Allows the player to set their chat name color.",
+
+      -- give_to_admin blocks attempts to revoke this privilege from admins.
+      -- Bizarrely, on_revoke still gets called. Good one minetest.
+      give_to_admin = false,
+
+      -- Manually grant/revokes of this privilege should reflect in the db
+      on_grant = function(name, granter_name)
+         civsupp.db.update_namecolor(name, nil, true)
+      end,
+      on_revoke = function(name, revoker_name)
+         civsupp.db.update_namecolor(name, nil, false)
+         player_chatcolors[name] = nil
+      end
    }
 )
-
-local player_chatcolors = {}
 
 local old_get_player_name_color = civchat.get_player_name_color
 
 minetest.register_on_joinplayer(function(player)
+      -- The idea here is to make the database authoritative about the namecolor
+      -- privilege.
       local pname = player:get_player_name()
       local privs = core.get_player_privs(pname)
       local color_entry = civsupp.db.get_namecolor(pname)
@@ -24,9 +39,9 @@ minetest.register_on_joinplayer(function(player)
          end
          player_chatcolors[pname] = color_entry["color"]
       else
+         player_chatcolors[pname] = nil
          if privs["namecolor"] then
             pmutils.revoke_privilege(pname, "namecolor")
-            player_chatcolors[pname] = nil
             minetest.log(
                "[CivSupporter] " .. pname .. " had namecolor privilege revoked."
             )
