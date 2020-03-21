@@ -20,6 +20,7 @@ local password = minetest.settings:get("civsupporter_db_password")
 local u = pmutils
 
 local function prep_db()
+   local res
    env = assert (driver.postgres())
    -- connect to data source
    db = assert (env:connect(sourcename, username, password))
