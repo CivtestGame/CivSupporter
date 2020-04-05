@@ -6,8 +6,7 @@ Database connection functionality via PostgreSQL.
 
 ]]--
 
-local ie = minetest.request_insecure_environment() or
-   error("Mod requires decreased security settings in minetest.conf")
+local ie = ...
 
 local driver = ie.require("luasql.postgres")
 local db = nil
