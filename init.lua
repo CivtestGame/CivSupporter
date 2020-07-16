@@ -11,6 +11,7 @@ local ie = minetest.request_insecure_environment() or
 loadfile(modpath .. "/db.lua")(ie)
 dofile(modpath .. "/namecolor.lua")
 dofile(modpath .. "/alphahat.lua")
+dofile(modpath .. "/gild_cloth.lua")
 
 minetest.debug("[CivSupporter] Initialised.")
 

@@ -4,9 +4,6 @@ minetest.register_privilege(
    "alpha_hat",
    {
       description = "Allows the player to acquire the Alpha Hat.",
-
-      -- give_to_admin blocks attempts to revoke this privilege from admins.
-      -- Bizarrely, on_revoke still gets called. Good one minetest.
       give_to_admin = false
    }
 )
